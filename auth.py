@@ -23,12 +23,10 @@ CORS(app, resources={
 
 driver = None
 openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-
 gen_q_prompt = """Ask ChatGPT your {field}. Return just the question as a JSON string, nothing else."""
 
 def extract_answer(gen):
     prompt = f"""Extract the answer as a value, nothing else: {gen}"""
-
     response = openai_client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
