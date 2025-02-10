@@ -1,0 +1,6 @@
+chrome-profile
+chrome-debug-profile
+*.crt
+*.key
+.env
+.DS_Store

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login with ChatGPT Demo</title>
+    <style>
+        .result-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .field { font-weight: bold; }
+        .question { color: #666; }
+        .answer { color: #10a37f; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <select id="model">
+        <option value="gpt">GPT-3.5</option>
+        <option value="mistral">Mistral</option>
+    </select>
+    <button onclick="loginWithChatGPT()">Login with ChatGPT</button>
+    <div id="result"></div>
+
+    <script>
+        const FIELDS = [
+            { id: 'name', label: 'Full Name' },
+            { id: 'email', label: 'Email Address' },
+            { id: 'age', label: 'Age in years' },
+            { id: 'location', label: 'Current Location' }
+        ];
+
+        async function loginWithChatGPT() {
+            document.getElementById('result').textContent = 'Verifying...';
+            const model = document.getElementById('model').value;
+            const fields = FIELDS.map(f => `${f.id}:${f.label}`).join(',');
+            
+            try {
+                const response = await fetch(`http://localhost:5000/verify?fields=${fields}&model=${model}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    document.getElementById('result').textContent = 'Error: ' + data.error;
+                } else {
+                    const results = Object.entries(data.results).map(([field_id, info]) => `
+                        <div class="result-item">
+                            <div class="field">${info.label}</div>
+                            <div class="question">Q: ${info.question}</div>
+                            <div class="answer">A: ${info.answer}</div>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('result').innerHTML = results;
+                }
+            } catch (error) {
+                document.getElementById('result').textContent = 
+                    'Error connecting to local server: ' + error;
+            }
+        }
+    </script>
+</body>
+</html> 
